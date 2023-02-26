@@ -1,0 +1,123 @@
+package gui;
+
+import core.Authenticator;
+import database.BookDAO;
+import database.UserDAO;
+import org.apache.commons.codec.digest.DigestUtils;
+import products.*;
+
+import java.util.Scanner;
+
+public class GUI {
+    private final Scanner scanner = new Scanner(System.in);
+    final Authenticator authenticator = Authenticator.getInstance();
+    final BookDAO bookDAO = BookDAO.getInstance();
+    final UserDAO userDAO = UserDAO.getInstance();
+    private static final GUI instance = new GUI();
+
+    private GUI() {
+    }
+
+    public String showMenu(){
+        System.out.println("1. List electric vehicles");
+        System.out.println("2. Buy electric vehicle");
+        System.out.println("3. Exit");
+        System.out.println("4. Logout");
+        if (this.authenticator.getLoggedUser() != null &&
+                this.authenticator.getLoggedUser().getRole() == User.Role.ADMIN) {
+            System.out.println("5. Add book");
+            System.out.println("6. Change user's role");
+            System.out.println("7. Fill up stock");
+        }
+        return scanner.nextLine();
+    }
+
+    public String showLoginMenu(){
+        System.out.println("1. Login");
+        System.out.println("2. Register");
+        System.out.println("3. Exit");
+        return scanner.nextLine();
+    }
+
+    //public void listUsers() {
+        //for (User user : this.userDB.getUsers()) {
+        //    System.out.println(user);
+       // }
+    //}
+
+    public void listBooks() {
+        for (Book book : this.bookDAO.getBooks()) {
+            System.out.println(book);
+        }
+    }
+
+
+
+    public String readUser() {
+        System.out.println("User:");
+        return this.scanner.nextLine();
+    }
+
+    public String readRole() {
+        System.out.println("Role:");
+
+        return this.scanner.nextLine();
+    }
+
+
+    public void showChangeRoleResult(boolean result) {
+        if(result) {
+            System.out.println("Role changed successful");
+        } else {
+            System.out.println("Bad login or role!");
+        }
+    }
+
+
+
+    public User register() {
+        System.out.println("Login:");
+        String login = this.scanner.nextLine();
+        System.out.println("Password:");
+        String password = this.scanner.nextLine();
+        return new User(login, DigestUtils.md5Hex(password + Authenticator.getSeed()), User.Role.USER);
+        }
+
+    public User readLoginAndPassword() {
+        User user = new User();
+        System.out.println("Login:");
+        user.setLogin(this.scanner.nextLine());
+        System.out.println("Password:");
+        user.setPassword(this.scanner.nextLine());
+        return user;
+    }
+
+    public Book readNewBookData() {
+        System.out.println("Title:");
+        String title = this.scanner.nextLine();
+        System.out.println("Author:");
+        String author = this.scanner.nextLine();
+        System.out.println("Isbn:");
+        String isbn = this.scanner.nextLine();
+
+        return new Book(title, author, isbn);
+
+    }
+
+    public String readIban() {
+        System.out.println("Iban:");
+        return this.scanner.nextLine();
+    }
+
+    public void showRentResult(boolean result) {
+        if(result) {
+            System.out.println("Loan successful");
+        } else {
+            System.out.println("Iban does not exist or book is already loaned");
+        }
+    }
+
+    public static GUI getInstance() {
+        return instance;
+    }
+}
