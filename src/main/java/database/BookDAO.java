@@ -53,29 +53,31 @@ public class BookDAO {
             PreparedStatement ps = this.connection.prepareStatement(sql);
             ps.setString(1, isbn);
             ResultSet rs = ps.executeQuery();
-            if(rs.next()) {
+            while (rs.next()) {
                 boolean loan = rs.getBoolean("loan_is_active");
-                if(!loan) {
-                    String updateSql = "UPDATE tvehicle SET rent = ? WHERE id = ?";
-                    String insertSql = "INSERT INTO tloan " +
-                            "(tloan.start_date, tloan.end_date, tloan.book_id, tloan.user_id, " +
-                            "tloan.loan_is_active) " +
-                            "VALUES(?, ?, " +
-                            "(SELECT tbook.id FROM tbook WHERE tbook.isbn=?), " +
-                            "(SELECT tuser.id FROM tuser WHERE tuser.login = ?), ?)";
-
-                    PreparedStatement updatePs = this.connection.prepareStatement(insertSql);
-
-                    updatePs.setDate(1, Date.valueOf(startDate));
-                    updatePs.setDate(2, Date.valueOf(endDate));
-                    updatePs.setString(3, isbn);
-                    updatePs.setString(4, login);
-                    updatePs.setBoolean(5, true);
-
-                    updatePs.executeUpdate();
-                    return true;
+                if(loan) {
+                    return false;
                 }
             }
+            String updateSql = "UPDATE tvehicle SET rent = ? WHERE id = ?";
+            String insertSql = "INSERT INTO tloan " +
+                    "(tloan.start_date, tloan.end_date, tloan.book_id, tloan.user_id, " +
+                    "tloan.loan_is_active) " +
+                    "VALUES(?, ?, " +
+                    "(SELECT tbook.id FROM tbook WHERE tbook.isbn=?), " +
+                    "(SELECT tuser.id FROM tuser WHERE tuser.login = ?), ?)";
+
+            PreparedStatement updatePs = this.connection.prepareStatement(insertSql);
+
+            updatePs.setDate(1, Date.valueOf(startDate));
+            updatePs.setDate(2, Date.valueOf(endDate));
+            updatePs.setString(3, isbn);
+            updatePs.setString(4, login);
+            updatePs.setBoolean(5, true);
+
+            updatePs.executeUpdate();
+            return true;
+
         } catch (SQLException e) {}
         return false;
     }
