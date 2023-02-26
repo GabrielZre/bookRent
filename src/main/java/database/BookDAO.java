@@ -1,13 +1,12 @@
 package database;
 
 import products.Book;
+import products.LoanedBook;
 
 import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class BookDAO {
 
@@ -47,6 +46,67 @@ public class BookDAO {
         }
         return result;
     }
+
+    public List<LoanedBook> getLoanedBooks() {
+        ArrayList<LoanedBook> result = new ArrayList<>();
+        try {
+            String sql = "SELECT tbook.title, tbook.author, tbook.isbn, tloan.start_date, " +
+                    "tloan.end_date, tloan.loan_is_active, tuser.login FROM tloan " +
+                    "INNER JOIN tbook ON tbook.id=tloan.book_id " +
+                    "INNER JOIN tuser ON tuser.id=tloan.user_id " +
+                    "WHERE tloan.loan_is_active = 1";
+            PreparedStatement ps = this.connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                String title = rs.getString("title");
+                String author = rs.getString("author");
+                String isbn = rs.getString("isbn");
+                LocalDate startDate = rs.getDate("start_date").toLocalDate();
+                LocalDate endDate = rs.getDate("end_date").toLocalDate();
+                Boolean isLoan = rs.getBoolean("loan_is_active");
+                String user = rs.getString("login");
+                LoanedBook loanedBook = new LoanedBook(title, author, isbn,
+                        startDate, endDate, isLoan, user);
+                result.add(loanedBook);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
+    public List<LoanedBook> getNotGivenAwayBooks() {
+        ArrayList<LoanedBook> result = new ArrayList<>();
+        try {
+            String sql = "SELECT tbook.title, tbook.author, tbook.isbn, tloan.start_date, tloan.end_date, " +
+                    "(SELECT CURDATE()) AS actual_date, tloan.loan_is_active, " +
+                    "tuser.login FROM tloan " +
+                    "INNER JOIN tbook ON tbook.id = tloan.book_id " +
+                    "INNER JOIN tuser ON tuser.id = tloan.user_id " +
+                    "WHERE tloan.loan_is_active = 1 AND CURDATE() > tloan.end_date;";
+            PreparedStatement ps = this.connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                String title = rs.getString("title");
+                String author = rs.getString("author");
+                String isbn = rs.getString("isbn");
+                LocalDate startDate = rs.getDate("start_date").toLocalDate();
+                LocalDate actualDate = rs.getDate("actual_date").toLocalDate();
+                LocalDate endDate = rs.getDate("end_date").toLocalDate();
+                Boolean isLoan = rs.getBoolean("loan_is_active");
+                String user = rs.getString("login");
+                LoanedBook loanedBook = new LoanedBook(title, author, isbn,
+                        startDate, endDate, isLoan, user);
+                result.add(loanedBook);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
     public boolean loanBook(String isbn, String login, LocalDate startDate, LocalDate endDate) {
         try {
             String sql = "SELECT * FROM tloan INNER JOIN tbook ON tbook.id = tloan.book_id WHERE tbook.isbn = ?";
@@ -59,7 +119,6 @@ public class BookDAO {
                     return false;
                 }
             }
-            String updateSql = "UPDATE tvehicle SET rent = ? WHERE id = ?";
             String insertSql = "INSERT INTO tloan " +
                     "(tloan.start_date, tloan.end_date, tloan.book_id, tloan.user_id, " +
                     "tloan.loan_is_active) " +
@@ -82,31 +141,7 @@ public class BookDAO {
         return false;
     }
 
-    /*public boolean loanBook(String isbn, String login) {
-        try {
-            String sql = "INSERT INTO tloan " +
-                    "(tloan.start_date, tloan.end_date, tloan.book_id, tloan.user_id, " +
-                    "tloan.loan_is_active) " +
-                    "VALUES(?, ?, " +
-                    "(SELECT tbook.id FROM tbook WHERE tbook.isbn=?), " +
-                    "(SELECT tuser.id FROM tuser WHERE tuser.login = ?), 1)";
-            PreparedStatement ps = this.connection.prepareStatement(sql);
-            ps.setString(1, isbn);
-            ps.setString(1, isbn);
-            ps.setString(1, isbn);
-            ps.setString(1, isbn);
-            ps.setString(1, login);
 
-            ResultSet rs = ps.executeQuery();
-            if(rs.next()) {
-          //      boolean loan = rs.getBoolean()
-            }
-        } catch (SQLException e) {
-            return false;
-        }
-        return false;
-
-    }*/
 
     public void addBook(Book book) {
         try {
@@ -118,16 +153,6 @@ public class BookDAO {
             ps.setString(2, book.getAuthor());
             ps.setString(3, book.getIsbn());
 
-            ResultSet rs = ps.getGeneratedKeys();
-            //rs.next();
-            //int bookId = rs.getInt(1);
-            //String sql = "INSERT INTO tloan " +
-            //        "(start_date, end_date, book_id, user_id, loan_is_active)";
-            //ps.setString(1, start_date);
-            //ps.setString(2, end_date);
-            //ps.setString(3, book_id);
-            //ps.setString(4, user_id);
-            //ps.setString(5, loan_is_active);
             ps.executeUpdate();
 
         } catch (SQLException e){

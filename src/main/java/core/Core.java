@@ -84,15 +84,22 @@ public class Core {
                 case "6":
                     //if(this.authenticator.getLoggedUser() != null &&
                      //       this.authenticator.getLoggedUser().getRole() == User.Role.ADMIN) {
-                      //  this.gui.listUsers();
-                       // this.gui.showChangeRoleResult(this.userDB.changeUserRole(this.gui.readUser(), this.gui.readRole()));
+                     //   this.gui.listUsers();
+                     //   this.gui.showChangeRoleResult(this.userDB.changeUserRole(this.gui.readUser(), this.gui.readRole()));
                         break;
                     //}
                 case "7":
                     if(this.authenticator.getLoggedUser() != null &&
                             this.authenticator.getLoggedUser().getRole() == User.Role.ADMIN) {
+                        this.gui.listLoanedBooks();
                         //this.gui.listElectricVehicles();
                         //this.gui.showAddStockResult(this.electricVehicleDB.addStock(this.gui.readCode(),this.gui.readAmount()));
+                        break;
+                    }
+                case "8":
+                    if(this.authenticator.getLoggedUser() != null &&
+                            this.authenticator.getLoggedUser().getRole() == User.Role.ADMIN) {
+                        this.gui.listNotGivenAwayBooks();
                         break;
                     }
 

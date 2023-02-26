@@ -19,15 +19,16 @@ public class GUI {
     }
 
     public String showMenu(){
-        System.out.println("1. List electric vehicles");
-        System.out.println("2. Buy electric vehicle");
+        System.out.println("1. List books");
+        System.out.println("2. Loan book");
         System.out.println("3. Exit");
         System.out.println("4. Logout");
         if (this.authenticator.getLoggedUser() != null &&
                 this.authenticator.getLoggedUser().getRole() == User.Role.ADMIN) {
             System.out.println("5. Add book");
             System.out.println("6. Change user's role");
-            System.out.println("7. Fill up stock");
+            System.out.println("7. List Loaned Books");
+            System.out.println("8. List not given away Books");
         }
         return scanner.nextLine();
     }
@@ -39,11 +40,6 @@ public class GUI {
         return scanner.nextLine();
     }
 
-    //public void listUsers() {
-        //for (User user : this.userDB.getUsers()) {
-        //    System.out.println(user);
-       // }
-    //}
 
     public void listBooks() {
         for (Book book : this.bookDAO.getBooks()) {
@@ -51,6 +47,17 @@ public class GUI {
         }
     }
 
+    public void listLoanedBooks() {
+        for (LoanedBook loanedBook : this.bookDAO.getLoanedBooks()) {
+            System.out.println(loanedBook);
+        }
+    }
+
+    public void listNotGivenAwayBooks() {
+        for (LoanedBook loanedBook : this.bookDAO.getNotGivenAwayBooks()) {
+            System.out.println(loanedBook);
+        }
+    }
 
 
     public String readUser() {
