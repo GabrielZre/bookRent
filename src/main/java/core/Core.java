@@ -102,6 +102,12 @@ public class Core {
                         this.gui.listNotGivenAwayBooks();
                         break;
                     }
+                case "9":
+                    if(this.authenticator.getLoggedUser() != null &&
+                            this.authenticator.getLoggedUser().getRole() == User.Role.ADMIN) {
+                        this.gui.listSearchBooks();
+                        break;
+                    }
 
                 default:
                     System.out.println("Wrong choose !!");

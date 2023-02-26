@@ -47,6 +47,37 @@ public class BookDAO {
         return result;
     }
 
+    public List<Book> getSearchBooks(String keyword) {
+        ArrayList<Book> result = new ArrayList<>();
+        String regex = "%" + keyword + "%"; // add wildcards to the keyword
+        try {
+            String sql = "SELECT tbook.title, tbook.author, tbook.isbn FROM tbook WHERE tbook.title LIKE ? OR tbook.author LIKE ? OR tbook.isbn LIKE ?";
+
+            PreparedStatement ps = this.connection.prepareStatement(sql);
+            ps.setString(1, regex);
+            ps.setString(2, regex);
+            ps.setString(3, regex);
+            /*ps.setString(1, keyword );
+            ps.setString(2, keyword );
+            ps.setString(3, keyword );
+*/
+            //ps.setObject(1, "%");
+
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                String title = rs.getString("title");
+                String author = rs.getString("author");
+                String isbn = rs.getString("isbn");
+                Book book = new Book(title, author, isbn);
+                result.add(book);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
     public List<LoanedBook> getLoanedBooks() {
         ArrayList<LoanedBook> result = new ArrayList<>();
         try {

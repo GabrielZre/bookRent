@@ -29,6 +29,7 @@ public class GUI {
             System.out.println("6. Change user's role");
             System.out.println("7. List Loaned Books");
             System.out.println("8. List not given away Books");
+            System.out.println("9. Search Books");
         }
         return scanner.nextLine();
     }
@@ -46,6 +47,16 @@ public class GUI {
             System.out.println(book);
         }
     }
+
+    public void listSearchBooks() {
+        System.out.println("Search keyword: ");
+        String keyword = this.scanner.nextLine();
+
+        for (Book book : this.bookDAO.getSearchBooks(keyword)) {
+            System.out.println(book);
+        }
+    }
+
 
     public void listLoanedBooks() {
         for (LoanedBook loanedBook : this.bookDAO.getLoanedBooks()) {
@@ -100,16 +111,17 @@ public class GUI {
     }
 
     public Book readNewBookData() {
-        System.out.println("Title:");
+        System.out.println("Title: ");
         String title = this.scanner.nextLine();
-        System.out.println("Author:");
+        System.out.println("Author: ");
         String author = this.scanner.nextLine();
-        System.out.println("Isbn:");
+        System.out.println("Isbn: ");
         String isbn = this.scanner.nextLine();
 
         return new Book(title, author, isbn);
 
     }
+
 
     public String readIban() {
         System.out.println("Iban:");
