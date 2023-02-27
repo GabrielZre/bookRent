@@ -21,15 +21,14 @@ public class GUI {
     public String showMenu(){
         System.out.println("1. List books");
         System.out.println("2. Loan book");
-        System.out.println("3. Exit");
-        System.out.println("4. Logout");
+        System.out.println("3. Search Books");
+        System.out.println("4. Exit");
+        System.out.println("5. Logout");
         if (this.authenticator.getLoggedUser() != null &&
                 this.authenticator.getLoggedUser().getRole() == User.Role.ADMIN) {
-            System.out.println("5. Add book");
-            System.out.println("6. Change user's role");
+            System.out.println("6. Add book");
             System.out.println("7. List Loaned Books");
             System.out.println("8. List not given away Books");
-            System.out.println("9. Search Books");
         }
         return scanner.nextLine();
     }
@@ -123,8 +122,18 @@ public class GUI {
     }
 
 
-    public String readIban() {
-        System.out.println("Iban:");
+    public String readIsbn() {
+        System.out.println("Isbn:");
+        return this.scanner.nextLine();
+    }
+
+    public String readName() {
+        System.out.println("Name:");
+        return this.scanner.nextLine();
+    }
+
+    public String readSurname() {
+        System.out.println("Surname:");
         return this.scanner.nextLine();
     }
 

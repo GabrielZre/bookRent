@@ -45,6 +45,31 @@ public class UserDAO {
         }
         return null;
     }
+
+    public boolean addUser(User user) {
+        try {
+            String sql = "SELECT * FROM tuser WHERE tuser.login = ?";
+            PreparedStatement ps = this.connection.prepareStatement(sql);
+            ps.setString(1, user.getLogin());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return false;
+            }
+            String insertSql = "INSERT INTO tuser (tuser.login, tuser.password, tuser.role) VALUES (?,?,?)";
+
+            PreparedStatement updatePs = this.connection.prepareStatement(insertSql);
+
+            updatePs.setString(1, user.getLogin());
+            updatePs.setString(2, user.getPassword());
+            updatePs.setString(3, String.valueOf(user.getRole()));
+
+            updatePs.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {}
+        return false;
+    }
+
     public static UserDAO getInstance() {
         return instance;
     }

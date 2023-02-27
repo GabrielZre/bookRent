@@ -57,11 +57,6 @@ public class BookDAO {
             ps.setString(1, regex);
             ps.setString(2, regex);
             ps.setString(3, regex);
-            /*ps.setString(1, keyword );
-            ps.setString(2, keyword );
-            ps.setString(3, keyword );
-*/
-            //ps.setObject(1, "%");
 
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
@@ -82,7 +77,7 @@ public class BookDAO {
         ArrayList<LoanedBook> result = new ArrayList<>();
         try {
             String sql = "SELECT tbook.title, tbook.author, tbook.isbn, tloan.start_date, " +
-                    "tloan.end_date, tloan.loan_is_active, tuser.login FROM tloan " +
+                    "tloan.end_date, tloan.loan_is_active, tuser.login, tloan.name, tloan.surname FROM tloan " +
                     "INNER JOIN tbook ON tbook.id=tloan.book_id " +
                     "INNER JOIN tuser ON tuser.id=tloan.user_id " +
                     "WHERE tloan.loan_is_active = 1";
@@ -96,8 +91,10 @@ public class BookDAO {
                 LocalDate endDate = rs.getDate("end_date").toLocalDate();
                 Boolean isLoan = rs.getBoolean("loan_is_active");
                 String user = rs.getString("login");
+                String name = rs.getString("name");
+                String surname = rs.getString("surname");
                 LoanedBook loanedBook = new LoanedBook(title, author, isbn,
-                        startDate, endDate, isLoan, user);
+                        startDate, endDate, isLoan, user, name, surname);
                 result.add(loanedBook);
             }
 
@@ -112,7 +109,7 @@ public class BookDAO {
         try {
             String sql = "SELECT tbook.title, tbook.author, tbook.isbn, tloan.start_date, tloan.end_date, " +
                     "(SELECT CURDATE()) AS actual_date, tloan.loan_is_active, " +
-                    "tuser.login FROM tloan " +
+                    "tuser.login, tloan.name, tloan.surname FROM tloan " +
                     "INNER JOIN tbook ON tbook.id = tloan.book_id " +
                     "INNER JOIN tuser ON tuser.id = tloan.user_id " +
                     "WHERE tloan.loan_is_active = 1 AND CURDATE() > tloan.end_date;";
@@ -123,12 +120,13 @@ public class BookDAO {
                 String author = rs.getString("author");
                 String isbn = rs.getString("isbn");
                 LocalDate startDate = rs.getDate("start_date").toLocalDate();
-                LocalDate actualDate = rs.getDate("actual_date").toLocalDate();
                 LocalDate endDate = rs.getDate("end_date").toLocalDate();
                 Boolean isLoan = rs.getBoolean("loan_is_active");
                 String user = rs.getString("login");
+                String name = rs.getString("name");
+                String surname = rs.getString("surname");
                 LoanedBook loanedBook = new LoanedBook(title, author, isbn,
-                        startDate, endDate, isLoan, user);
+                        startDate, endDate, isLoan, user, name, surname);
                 result.add(loanedBook);
             }
 
@@ -138,7 +136,7 @@ public class BookDAO {
         return result;
     }
 
-    public boolean loanBook(String isbn, String login, LocalDate startDate, LocalDate endDate) {
+    public boolean loanBook(String isbn, String login, LocalDate startDate, LocalDate endDate, String name, String surname) {
         try {
             String sql = "SELECT * FROM tloan INNER JOIN tbook ON tbook.id = tloan.book_id WHERE tbook.isbn = ?";
             PreparedStatement ps = this.connection.prepareStatement(sql);
@@ -152,10 +150,10 @@ public class BookDAO {
             }
             String insertSql = "INSERT INTO tloan " +
                     "(tloan.start_date, tloan.end_date, tloan.book_id, tloan.user_id, " +
-                    "tloan.loan_is_active) " +
+                    "tloan.loan_is_active, tloan.name, tloan.surname) " +
                     "VALUES(?, ?, " +
                     "(SELECT tbook.id FROM tbook WHERE tbook.isbn=?), " +
-                    "(SELECT tuser.id FROM tuser WHERE tuser.login = ?), ?)";
+                    "(SELECT tuser.id FROM tuser WHERE tuser.login = ?), ?, ?, ?)";
 
             PreparedStatement updatePs = this.connection.prepareStatement(insertSql);
 
@@ -164,6 +162,8 @@ public class BookDAO {
             updatePs.setString(3, isbn);
             updatePs.setString(4, login);
             updatePs.setBoolean(5, true);
+            updatePs.setString(6, name);
+            updatePs.setString(7, surname);
 
             updatePs.executeUpdate();
             return true;
