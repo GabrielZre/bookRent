@@ -6,7 +6,6 @@ import gui.GUI;
 import products.User;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class Core {
     final BookDAO bookDAO = BookDAO.getInstance();
@@ -36,9 +35,6 @@ public class Core {
                         else
                         {
                             isLogged = true;
-                            //LocalDate date = LocalDate.now();
-                            //System.out.println(date);
-                            //System.out.println(date.plusDays(14));
                         }
                         counter++;
                     }
@@ -65,34 +61,33 @@ public class Core {
                     this.gui.showRentResult(this.bookDAO.loanBook(this.gui.readIsbn(), this.authenticator.getLoggedUser().getLogin(), date, date.plusDays(14), this.gui.readName(), this.gui.readSurname()));
                     break;
                 case "3":
-                    this.gui.listSearchBooks();
+                    this.gui.showReturnBookResult(this.bookDAO.returnBook(this.gui.readIsbn(), authenticator.getLoggedUser().getLogin()));
                     break;
                 case "4":
+                    this.gui.listSearchBooks();
+                    break;
+                case "5":
+                    this.gui.listLoanedBooks();
+                    break;
+                case "6":
                     isRunning = false;
                     break;
 
-                case "5":
+                case "7":
                     this.authenticator.Logout();
                     isRunning = false;
                     System.out.println("Logged Out Successfully!");
                     start();
                     break;
 
-                case "6":
+                case "8":
                     if(this.authenticator.getLoggedUser() != null &&
                             this.authenticator.getLoggedUser().getRole() == User.Role.ADMIN) {
                         this.bookDAO.addBook(this.gui.readNewBookData());
                         break;
                     }
-                case "7":
-                    if(this.authenticator.getLoggedUser() != null &&
-                            this.authenticator.getLoggedUser().getRole() == User.Role.ADMIN) {
-                        this.gui.listLoanedBooks();
-                        //this.gui.listElectricVehicles();
-                        //this.gui.showAddStockResult(this.electricVehicleDB.addStock(this.gui.readCode(),this.gui.readAmount()));
-                        break;
-                    }
-                case "8":
+
+                case "9":
                     if(this.authenticator.getLoggedUser() != null &&
                             this.authenticator.getLoggedUser().getRole() == User.Role.ADMIN) {
                         this.gui.listNotGivenAwayBooks();

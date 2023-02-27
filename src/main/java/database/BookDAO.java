@@ -172,6 +172,37 @@ public class BookDAO {
         return false;
     }
 
+    public boolean returnBook(String isbn, String user) {
+        try {
+            String sql = "SELECT * FROM tloan INNER JOIN tbook ON tbook.id = tloan.book_id INNER JOIN tuser ON tuser.id=tloan.user_id WHERE tbook.isbn = ? AND tuser.login= ? AND tloan.loan_is_active = ?";
+            PreparedStatement ps = this.connection.prepareStatement(sql);
+            ps.setString(1, isbn);
+            ps.setString(2, user);
+            ps.setBoolean(3, true);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                String updateSql = "UPDATE tloan INNER JOIN tbook ON tbook.id = tloan.book_id I" +
+                        "NNER JOIN tuser ON tuser.id = tloan.user_id SET tloan.loan_is_active = ? " +
+                        "WHERE tbook.isbn = ? AND tuser.login = ?";
+
+                PreparedStatement updatePs = this.connection.prepareStatement(updateSql);
+
+                updatePs.setBoolean(1, false);
+                updatePs.setString(2, isbn);
+                updatePs.setString(3, user);
+
+                updatePs.executeUpdate();
+
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 
     public void addBook(Book book) {

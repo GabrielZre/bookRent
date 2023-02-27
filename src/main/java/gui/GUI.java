@@ -6,6 +6,7 @@ import database.UserDAO;
 import org.apache.commons.codec.digest.DigestUtils;
 import products.*;
 
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class GUI {
@@ -21,14 +22,15 @@ public class GUI {
     public String showMenu(){
         System.out.println("1. List books");
         System.out.println("2. Loan book");
-        System.out.println("3. Search Books");
-        System.out.println("4. Exit");
-        System.out.println("5. Logout");
+        System.out.println("3. Return Book");
+        System.out.println("4. Search Books");
+        System.out.println("5. List Loaned Books");
+        System.out.println("6. Exit");
+        System.out.println("7. Logout");
         if (this.authenticator.getLoggedUser() != null &&
                 this.authenticator.getLoggedUser().getRole() == User.Role.ADMIN) {
-            System.out.println("6. Add book");
-            System.out.println("7. List Loaned Books");
-            System.out.println("8. List not given away Books");
+            System.out.println("8. Add book");
+            System.out.println("9. List not given away Books");
         }
         return scanner.nextLine();
     }
@@ -82,11 +84,11 @@ public class GUI {
     }
 
 
-    public void showChangeRoleResult(boolean result) {
+    public void showReturnBookResult(boolean result) {
         if(result) {
-            System.out.println("Role changed successful");
+            System.out.println("Book returned successfully");
         } else {
-            System.out.println("Bad login or role!");
+            System.out.println("You have not loaned this book actually");
         }
     }
 
@@ -99,6 +101,9 @@ public class GUI {
         String password = this.scanner.nextLine();
         return new User(login, DigestUtils.md5Hex(password + Authenticator.getSeed()), User.Role.USER);
         }
+
+
+
 
     public User readLoginAndPassword() {
         User user = new User();
@@ -136,6 +141,7 @@ public class GUI {
         System.out.println("Surname:");
         return this.scanner.nextLine();
     }
+
 
     public void showRentResult(boolean result) {
         if(result) {
