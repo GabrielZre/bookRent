@@ -205,20 +205,27 @@ public class BookDAO {
 
 
 
-    public void addBook(Book book) {
-        try {
-            String sql = "INSERT INTO tbook " +
-                    "(title, author, isbn) VALUES (?,?,?)";
+    public boolean addBook(Book book) {
+        if(!book.getTitle().isEmpty() && !book.getAuthor().isEmpty() && book.getIsbn().length() == 13 && book.getIsbn().matches("\\d+" )) {
+            try {
+                String sql = "INSERT INTO tbook " +
+                        "(title, author, isbn) VALUES (?,?,?)";
 
-            PreparedStatement ps = this.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, book.getTitle());
-            ps.setString(2, book.getAuthor());
-            ps.setString(3, book.getIsbn());
+                PreparedStatement ps = this.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                ps.setString(1, book.getTitle());
+                ps.setString(2, book.getAuthor());
+                ps.setString(3, book.getIsbn());
 
-            ps.executeUpdate();
+                ps.executeUpdate();
 
-        } catch (SQLException e){
-            throw new RuntimeException(e);
+
+            } catch (SQLException e){
+                return false; // exception occurs when isbn is not unique, maybe bad habit but it's an console app
+            }
+            return true;
+        }
+        else {
+            return false;
         }
     }
 

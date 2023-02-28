@@ -83,7 +83,7 @@ public class Core {
                 case "8":
                     if(this.authenticator.getLoggedUser() != null &&
                             this.authenticator.getLoggedUser().getRole() == User.Role.ADMIN) {
-                        this.bookDAO.addBook(this.gui.readNewBookData());
+                        this.gui.showAddBookResult(this.bookDAO.addBook(this.gui.readNewBookData()));
                         break;
                     }
 

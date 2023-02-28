@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 27 Lut 2023, 22:47
+-- Czas generowania: 28 Lut 2023, 21:59
 -- Wersja serwera: 10.4.22-MariaDB
 -- Wersja PHP: 8.1.2
 
@@ -31,7 +31,7 @@ CREATE TABLE `tbook` (
   `id` int(11) NOT NULL,
   `title` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `author` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `isbn` varchar(13) COLLATE utf8_unicode_ci NOT NULL
+  `isbn` varchar(13) COLLATE utf8_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
@@ -43,7 +43,8 @@ INSERT INTO `tbook` (`id`, `title`, `author`, `isbn`) VALUES
 (3, 'Power of Rings', 'Tolkiens', '6285921923515'),
 (5, 'Uphill Down', 'Megan Holly', '3789874510049'),
 (6, 'Peppa', 'Baba Jaga', '1959021004291'),
-(7, 'Psychologia Ukladow', 'J.K Maxil', '8293219002031');
+(7, 'Psychologia Ukladow', 'J.K Maxil', '8293219002031'),
+(14, 'Little Prince', 'Anonymous', '7890123412318');
 
 -- --------------------------------------------------------
 
@@ -104,7 +105,8 @@ INSERT INTO `tuser` (`id`, `login`, `password`, `role`) VALUES
 -- Indeksy dla tabeli `tbook`
 --
 ALTER TABLE `tbook`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `isbn` (`isbn`);
 
 --
 -- Indeksy dla tabeli `tloan`
@@ -129,7 +131,7 @@ ALTER TABLE `tuser`
 -- AUTO_INCREMENT dla tabeli `tbook`
 --
 ALTER TABLE `tbook`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT dla tabeli `tloan`

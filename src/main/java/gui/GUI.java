@@ -92,7 +92,13 @@ public class GUI {
         }
     }
 
-
+    public void showAddBookResult(boolean result) {
+        if(result) {
+            System.out.println("Book added successfully");
+        } else {
+            System.out.println("Please check if the values are correct and isbn are unique 13 digits");
+        }
+    }
 
     public User register() {
         System.out.println("Login:");
@@ -123,7 +129,6 @@ public class GUI {
         String isbn = this.scanner.nextLine();
 
         return new Book(title, author, isbn);
-
     }
 
 
