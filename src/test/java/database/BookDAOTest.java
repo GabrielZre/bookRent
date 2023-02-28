@@ -111,6 +111,34 @@ public class BookDAOTest {
                 });
     }
 
+    @Test
+    public void testAddEmptyBook() {
+        ArrayList<BookTest> expectedResult = new ArrayList<>();
+        String title = "";
+        String author = "";
+        String isbn = "";
+        BookTest expectedBook = new BookTest(title, author, isbn);
+        expectedResult.add(expectedBook);
+
+        addBook(expectedBook);
+
+        Assertions.assertTrue(getSearchBooks(isbn).isEmpty());
+    }
+
+    @Test
+    public void testAddBadIsbnBook() {
+        ArrayList<BookTest> expectedResult = new ArrayList<>();
+        String title = "Harry Potter";
+        String author = "Hagrid";
+        String isbn = "abc123abc123a";
+        BookTest expectedBook = new BookTest(title, author, isbn);
+        expectedResult.add(expectedBook);
+
+        addBook(expectedBook);
+
+        Assertions.assertTrue(getSearchBooks(isbn).isEmpty());
+    }
+
 
     public boolean addBook(BookTest bookTest) {
         if (!bookTest.getTitle().isEmpty() && !bookTest.getAuthor().isEmpty() && bookTest.getIsbn().length() == 13 && bookTest.getIsbn().matches("\\d+")) {
